@@ -1,0 +1,60 @@
+{
+  "models": {
+    "Random Forest": {
+      "model_name": "Random Forest",
+      "decision_threshold": 0.4,
+      "accuracy": 0.9507,
+      "precision": 0.8148,
+      "recall": 1.0,
+      "specificity": 0.9371,
+      "f1_score": 0.898,
+      "roc_auc": 0.9939,
+      "brier_score": 0.0318,
+      "confusion_matrix": {
+        "true_negatives": 149,
+        "false_positives": 10,
+        "false_negatives": 0,
+        "true_positives": 44
+      },
+      "clinical_impact_note": "Sensibilidade (Recall) de 100.0% com 0 falsos negativos. Na triagem obstétrica/materna, minimizar falsos negativos é vital para garantir encaminhamento precoce e acompanhamento oportuno."
+    },
+    "XGBoost": {
+      "model_name": "XGBoost",
+      "decision_threshold": 0.4,
+      "accuracy": 0.9507,
+      "precision": 0.8542,
+      "recall": 0.9318,
+      "specificity": 0.956,
+      "f1_score": 0.8913,
+      "roc_auc": 0.9923,
+      "brier_score": 0.0269,
+      "confusion_matrix": {
+        "true_negatives": 152,
+        "false_positives": 7,
+        "false_negatives": 3,
+        "true_positives": 41
+      },
+      "clinical_impact_note": "Sensibilidade (Recall) de 93.2% com 3 falsos negativos. Na triagem obstétrica/materna, minimizar falsos negativos é vital para garantir encaminhamento precoce e acompanhamento oportuno."
+    },
+    "Logistic Regression": {
+      "model_name": "Logistic Regression",
+      "decision_threshold": 0.4,
+      "accuracy": 0.9507,
+      "precision": 0.8148,
+      "recall": 1.0,
+      "specificity": 0.9371,
+      "f1_score": 0.898,
+      "roc_auc": 0.9953,
+      "brier_score": 0.0315,
+      "confusion_matrix": {
+        "true_negatives": 149,
+        "false_positives": 10,
+        "false_negatives": 0,
+        "true_positives": 44
+      },
+      "clinical_impact_note": "Sensibilidade (Recall) de 100.0% com 0 falsos negativos. Na triagem obstétrica/materna, minimizar falsos negativos é vital para garantir encaminhamento precoce e acompanhamento oportuno."
+    }
+  },
+  "champion_model": "Logistic Regression",
+  "selection_criteria": "Score clínico ponderado (50% Recall + 30% ROC-AUC + 20% F1-Score)"
+}

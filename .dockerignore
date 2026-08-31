@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.local
+.git/
+.github/
+.idea/
+.vscode/
+.DS_Store
+logs/*.jsonl
+outputs/*.pdf
