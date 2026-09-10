@@ -32,9 +32,12 @@ ENV/
 .streamlit/secrets.toml
 
 # Logs & outputs
-logs/
-outputs/
+logs/*
+!logs/audit_trail.jsonl
+outputs/*
+!outputs/.gitkeep
 *.pdf
+!RELATORIO_TECNICO_GUARDIA_AI.pdf
 reports/*.pdf
 *.log
 
