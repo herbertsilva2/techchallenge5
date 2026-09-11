@@ -69,11 +69,20 @@ def render_header():
             <h1 class="guardia-title">🛡️ Guardiã AI</h1>
             <p class="guardia-subtitle">
                 Sistema Inteligente de Suporte à Decisão Clínica e Assistencial para Saúde e Segurança da Mulher
-                <br><span style="color: #5EEAD4; font-weight: 500;">Tech Challenge Fase 5 | Hackathon IADT — Machine Learning • SHAP • RAG • LangGraph</span>
             </p>
         </div>
-        <div class="ethical-banner">
-            ⚖️ <b>Aviso Institucional de Apoio à Decisão (CDSS):</b> A Guardiã AI opera exclusivamente como ferramenta auxiliar de triagem e cálculo preditivo para profissionais de saúde e assistência. As predições e diretrizes geradas não substituem a avaliação clínica individualizada, diagnósticos médicos ou decisões de segurança conduzidas por humanos.
+        <div style="background-color: #F0FDFA !important; border: 1px solid #A7F3D0 !important; border-left: 6px solid #0D9488 !important; border-radius: 14px !important; padding: 14px 20px !important; margin-bottom: 22px !important; box-shadow: 0 2px 8px rgba(13, 148, 136, 0.08) !important;">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <span style="font-size: 22px; line-height: 1.2;">⚖️</span>
+                <div style="color: #0F172A !important; font-size: 13.5px; line-height: 1.55;">
+                    <strong style="color: #0F766E !important; font-size: 14px; font-weight: 700; display: inline-block; margin-bottom: 3px;">
+                        Lembrete Ético & Apoio à Decisão Clínica (Human-in-the-Loop):
+                    </strong>
+                    <span style="color: #0F172A !important; font-weight: 450; display: inline;">
+                        A <b style="color: #0F172A !important;">Guardiã AI</b> atua exclusivamente como ferramenta auxiliar de triagem e cálculo preditivo para profissionais de saúde e assistência social. As predições e diretrizes geradas <b style="color: #B91C1C !important;">não substituem</b> a avaliação clínica individualizada, diagnósticos médicos ou decisões de segurança conduzidas por humanos.
+                    </span>
+                </div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True,

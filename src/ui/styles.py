@@ -38,17 +38,35 @@ CUSTOM_CSS = """
         margin-bottom: 0;
     }
 
-    /* Banner Ético CDSS */
+    /* Banner Ético CDSS & Human-in-the-Loop (Caixa Arredondada Alto Contraste) */
     .ethical-banner {
-        background-color: rgba(15, 118, 110, 0.15);
-        border-left: 4px solid #0D9488;
-        border-radius: 8px;
-        padding: 12px 18px;
-        margin-bottom: 20px;
-        color: #CCFBF1;
-        font-size: 13px;
-        line-height: 1.5;
+        background-color: #F0FDFA !important;
+        border: 1px solid #A7F3D0 !important;
+        border-left: 6px solid #0D9488 !important;
+        border-radius: 14px !important;
+        padding: 14px 20px !important;
+        margin-bottom: 22px !important;
+        color: #0F172A !important;
+        box-shadow: 0 2px 8px rgba(13, 148, 136, 0.08) !important;
     }
+    .ethical-banner strong {
+        color: #0F766E !important;
+    }
+
+    /* Estilização para Blockquotes de Aviso Ético do Streamlit */
+    blockquote {
+        background: #0B192C !important;
+        border: 1px solid #334155 !important;
+        border-left: 5px solid #F59E0B !important;
+        border-radius: 8px !important;
+        padding: 14px 18px !important;
+        color: #F8FAFC !important;
+        margin: 18px 0 !important;
+    }
+    blockquote p, blockquote strong, blockquote span {
+        color: #F8FAFC !important;
+    }
+
 
     /* Cards de Risco */
     .risk-card {

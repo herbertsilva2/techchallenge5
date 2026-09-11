@@ -28,16 +28,14 @@ def load_and_enrich_dataset(raw_path: Path = RAW_DATASET_PATH, save_processed: b
     """
     np.random.seed(RANDOM_STATE)
 
-    # Se o arquivo bruto não existir no destino, copia/carrega do path da fase 1 se disponível
-    fase1_path = Path("/Users/wallacen/Desktop/pos-tech/techchalleng1/Gestational_Diabetes.csv")
-    if not raw_path.exists() and fase1_path.exists():
-        df_raw = pd.read_csv(fase1_path)
-        raw_path.parent.mkdir(parents=True, exist_ok=True)
-        df_raw.to_csv(raw_path, index=False)
-    elif raw_path.exists():
-        df_raw = pd.read_csv(raw_path)
-    else:
-        raise FileNotFoundError(f"Dataset bruto não encontrado em {raw_path} ou {fase1_path}")
+    # Verificar existência do dataset bruto
+    if not raw_path.exists():
+        raise FileNotFoundError(
+            f"Dataset bruto não encontrado em '{raw_path}'. "
+            "Certifique-se de que o arquivo 'gestational_diabetes.csv' está presente em 'data/raw/'."
+        )
+
+    df_raw = pd.read_csv(raw_path)
 
     # Padronização de nomes de colunas
     df = df_raw.copy()
