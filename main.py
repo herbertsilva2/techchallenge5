@@ -8,6 +8,12 @@ import json
 import sys
 from pprint import pprint
 
+# Assegurar saída UTF-8 em consoles Windows (evita UnicodeEncodeError com emojis)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 from src.orchestration.graph import run_guardia_pipeline
 from src.audit.logger import log_encounter, get_audit_history
 from src.ml.train import train_and_evaluate_all

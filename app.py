@@ -53,7 +53,7 @@ init_session_state()
 
 # Barra Lateral (Sidebar)
 with st.sidebar:
-    st.image("https://img.shields.io/badge/Guardiã%20AI-Fase%205-teal?style=for-the-badge&logo=shield", use_container_width=True)
+    st.image("https://img.shields.io/badge/Guardiã%20AI-teal?style=for-the-badge&logo=shield", use_container_width=True)
     st.markdown("### ⚙️ Painel Operacional")
     st.info(f"**Provedor LLM:** `{LLM_PROVIDER.upper()}`\n\n**Limiar de Decisão:** `{DECISION_THRESHOLD_HIGH_RECALL:.2f}` (High Recall)")
 
@@ -81,7 +81,7 @@ with st.sidebar:
         - **Disque Direitos Humanos:** `100`
         """
     )
-    st.caption("Guardiã AI • Hackathon IADT FIAP • 2026")
+    st.caption("Guardiã AI • 2026")
 
 # Cabeçalho Principal
 render_header()

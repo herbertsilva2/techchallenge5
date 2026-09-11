@@ -115,6 +115,8 @@ techchallenge5/
 ├── models/                        # Modelos treinados (.joblib) e resumo de métricas (.json)
 ├── notebooks/
 │   └── 01_eda_treinamento_modelos_shap.ipynb  # Notebook documentado com EDA, treino e SHAP
+├── docs/
+│   └── adr/                       # Architectural Decision Records (ADRs 0001, 0002, 0003)
 ├── src/
 │   ├── config.py                  # Configurações gerais e parâmetros
 │   ├── ml/                        # Módulo de ML (dataset, train, evaluate, predictor, explainer SHAP)
