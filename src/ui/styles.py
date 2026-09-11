@@ -20,8 +20,9 @@ CUSTOM_CSS = """
         margin-bottom: 24px;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
     }
+    .guardia-header h1,
     .guardia-title {
-        color: #F8FAFC;
+        color: #94A3B8 !important;
         font-size: 28px;
         font-weight: 800;
         letter-spacing: -0.5px;

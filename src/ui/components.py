@@ -66,8 +66,8 @@ def render_header():
     st.markdown(
         """
         <div class="guardia-header">
-            <h1 class="guardia-title">🛡️ Guardiã AI</h1>
-            <p class="guardia-subtitle">
+            <h1 class="guardia-title" style="color: #94A3B8 !important;">🛡️ Guardiã AI</h1>
+            <p class="guardia-subtitle" style="color: #94A3B8 !important;">
                 Sistema Inteligente de Suporte à Decisão Clínica e Assistencial para Saúde e Segurança da Mulher
             </p>
         </div>
