@@ -38,15 +38,46 @@ st.set_page_config(
 # Injeção de Estilos CSS
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
+# Definições de Dados Limpos e Casos Pré-Configurados
+MANUAL_CASE_OPTION = "— Preenchimento Manual (Dados Limpos) —"
+DEFAULT_CLEAN_DATA = {
+    "Age": 25,
+    "Pregnancy_No": 1,
+    "Weight": 60.0,
+    "Height": 165.0,
+    "BMI": 22.0,
+    "Heredity": 0,
+    "Fasting_Glucose": 85.0,
+    "Systolic_BP": 110.0,
+    "Gestational_Weeks": 12,
+    "notes": "",
+    "patient_id": "",
+    "model": "XGBoost",
+}
+PRESET_OPTIONS = [MANUAL_CASE_OPTION] + list(CLINICAL_PRESETS.keys())
+
 
 def init_session_state():
-    """Inicializa variáveis de estado do Streamlit."""
+    """Inicializa variáveis de estado do Streamlit com dados limpos."""
     if "current_pipeline_result" not in st.session_state:
         st.session_state.current_pipeline_result = None
+    if "is_analyzed" not in st.session_state:
+        st.session_state.is_analyzed = False
+    if "form_version" not in st.session_state:
+        st.session_state.form_version = 0
     if "selected_preset" not in st.session_state:
-        st.session_state.selected_preset = "Caso 2: Risco de Diabetes Gestacional (Sobrepeso + Glicemia Limítrofe)"
+        st.session_state.selected_preset = MANUAL_CASE_OPTION
     if "preset_data" not in st.session_state:
-        st.session_state.preset_data = CLINICAL_PRESETS[st.session_state.selected_preset]
+        st.session_state.preset_data = dict(DEFAULT_CLEAN_DATA)
+
+
+def reset_to_initial_state():
+    """Restaura o estado limpo inicial da aplicação."""
+    st.session_state.current_pipeline_result = None
+    st.session_state.is_analyzed = False
+    st.session_state.selected_preset = MANUAL_CASE_OPTION
+    st.session_state.preset_data = dict(DEFAULT_CLEAN_DATA)
+    st.session_state.form_version += 1
 
 
 init_session_state()
@@ -100,59 +131,165 @@ tab_main, tab_shap, tab_rag, tab_audit, tab_metrics = st.tabs([
 # ==========================================================
 with tab_main:
     st.markdown("### 📋 Formulário de Acolhimento e Parâmetros Clínicos")
-    
+
+    is_locked = st.session_state.get("is_analyzed", False)
+
+    # Banner de Bloqueio com Ação de "Nova Análise"
+    if is_locked:
+        lock_col1, lock_col2 = st.columns([3, 1])
+        with lock_col1:
+            st.warning(
+                "🔒 **Análise Executada e Bloqueada para Alterações:**\n\n"
+                "Os parâmetros clínicos foram fixados para auditoria médica e conformidade ética. "
+                "Para alterar os dados ou iniciar uma nova triagem, clique em **'Nova Análise'**."
+            )
+        with lock_col2:
+            st.write("")
+            if st.button("🔄 Nova Análise", type="primary", use_container_width=True, key=f"btn_new_top_{st.session_state.form_version}"):
+                reset_to_initial_state()
+                st.rerun()
+
     # Seletor de Casos Pré-Configurados
     preset_col, btn_col = st.columns([3, 1])
+    preset_idx = PRESET_OPTIONS.index(st.session_state.selected_preset) if st.session_state.selected_preset in PRESET_OPTIONS else 0
     with preset_col:
         selected_case = st.selectbox(
             "Carregar Caso Clínico Pré-Configurado para Demonstração:",
-            options=list(CLINICAL_PRESETS.keys()),
-            index=1,
+            options=PRESET_OPTIONS,
+            index=preset_idx,
+            disabled=is_locked,
+            key=f"preset_select_{st.session_state.form_version}",
         )
     with btn_col:
         st.write("")
         st.write("")
-        if st.button("🔄 Aplicar Caso", use_container_width=True):
-            st.session_state.preset_data = CLINICAL_PRESETS[selected_case]
+        if st.button("🔄 Aplicar Caso", use_container_width=True, disabled=is_locked, key=f"btn_apply_preset_{st.session_state.form_version}"):
+            if selected_case in CLINICAL_PRESETS:
+                st.session_state.preset_data = dict(CLINICAL_PRESETS[selected_case])
+                st.session_state.selected_preset = selected_case
+            else:
+                st.session_state.preset_data = dict(DEFAULT_CLEAN_DATA)
+                st.session_state.selected_preset = MANUAL_CASE_OPTION
+            st.session_state.form_version += 1
             st.rerun()
 
     current_data = st.session_state.preset_data
 
     # Formulário de Parâmetros Clínicos
-    with st.form("clinical_form"):
+    with st.form(f"clinical_form_{st.session_state.form_version}"):
         col1, col2, col3 = st.columns(3)
         with col1:
-            age = st.number_input("Idade da Paciente (anos):", min_value=12, max_value=60, value=int(current_data["Age"]))
-            pregnancy_no = st.number_input("Nº de Gestações (G):", min_value=1, max_value=15, value=int(current_data["Pregnancy_No"]))
-            gestational_weeks = st.slider("Idade Gestacional (semanas):", min_value=4, max_value=42, value=int(current_data["Gestational_Weeks"]))
+            age = st.number_input(
+                "Idade da Paciente (anos):",
+                min_value=12,
+                max_value=60,
+                value=int(current_data["Age"]),
+                disabled=is_locked,
+                key=f"input_age_{st.session_state.form_version}",
+            )
+            pregnancy_no = st.number_input(
+                "Nº de Gestações (G):",
+                min_value=1,
+                max_value=15,
+                value=int(current_data["Pregnancy_No"]),
+                disabled=is_locked,
+                key=f"input_pregnancy_{st.session_state.form_version}",
+            )
+            gestational_weeks = st.slider(
+                "Idade Gestacional (semanas):",
+                min_value=4,
+                max_value=42,
+                value=int(current_data["Gestational_Weeks"]),
+                disabled=is_locked,
+                key=f"input_gestational_{st.session_state.form_version}",
+            )
 
         with col2:
-            weight = st.number_input("Peso Atual (kg):", min_value=35.0, max_value=180.0, value=float(current_data["Weight"]), step=0.5)
-            height = st.number_input("Altura (cm):", min_value=120.0, max_value=210.0, value=float(current_data["Height"]), step=1.0)
+            weight = st.number_input(
+                "Peso Atual (kg):",
+                min_value=35.0,
+                max_value=180.0,
+                value=float(current_data["Weight"]),
+                step=0.5,
+                disabled=is_locked,
+                key=f"input_weight_{st.session_state.form_version}",
+            )
+            height = st.number_input(
+                "Altura (cm):",
+                min_value=120.0,
+                max_value=210.0,
+                value=float(current_data["Height"]),
+                step=1.0,
+                disabled=is_locked,
+                key=f"input_height_{st.session_state.form_version}",
+            )
             calculated_bmi = round(weight / ((height / 100.0) ** 2), 1)
             st.metric("IMC Calculado:", f"{calculated_bmi} kg/m²")
 
         with col3:
-            fasting_glucose = st.number_input("Glicemia de Jejum (mg/dL):", min_value=40.0, max_value=300.0, value=float(current_data["Fasting_Glucose"]), step=1.0)
-            systolic_bp = st.number_input("Pressão Arterial Sistólica (mmHg):", min_value=70.0, max_value=240.0, value=float(current_data["Systolic_BP"]), step=1.0)
-            heredity_val = st.checkbox("Histórico Familiar de 1º Grau com Diabetes", value=(current_data["Heredity"] == 1))
+            fasting_glucose = st.number_input(
+                "Glicemia de Jejum (mg/dL):",
+                min_value=40.0,
+                max_value=300.0,
+                value=float(current_data["Fasting_Glucose"]),
+                step=1.0,
+                disabled=is_locked,
+                key=f"input_glucose_{st.session_state.form_version}",
+            )
+            systolic_bp = st.number_input(
+                "Pressão Arterial Sistólica (mmHg):",
+                min_value=70.0,
+                max_value=240.0,
+                value=float(current_data["Systolic_BP"]),
+                step=1.0,
+                disabled=is_locked,
+                key=f"input_bp_{st.session_state.form_version}",
+            )
+            heredity_val = st.checkbox(
+                "Histórico Familiar de 1º Grau com Diabetes",
+                value=(current_data["Heredity"] == 1),
+                disabled=is_locked,
+                key=f"input_heredity_{st.session_state.form_version}",
+            )
 
         clinical_notes = st.text_area(
             "Relato do Atendimento / Queixa Principal / Observações de Segurança:",
             value=current_data.get("notes", ""),
             height=110,
+            placeholder="Descreva sintomas, queixas clínicas ou relatos da paciente...",
             help="Descreva os sintomas, relatos da paciente ou transcrição de áudio do atendimento.",
+            disabled=is_locked,
+            key=f"input_notes_{st.session_state.form_version}",
         )
 
         sub_col1, sub_col2 = st.columns([2, 2])
         with sub_col1:
-            model_choice = st.selectbox("Algoritmo de Machine Learning:", ["XGBoost", "Random Forest", "Logistic Regression"], index=0)
+            models_list = ["XGBoost", "Random Forest", "Logistic Regression"]
+            model_default_idx = models_list.index(current_data.get("model", "XGBoost")) if current_data.get("model") in models_list else 0
+            model_choice = st.selectbox(
+                "Algoritmo de Machine Learning:",
+                models_list,
+                index=model_default_idx,
+                disabled=is_locked,
+                key=f"input_model_{st.session_state.form_version}",
+            )
         with sub_col2:
-            patient_name_input = st.text_input("Identificação / Código da Paciente (Anonimizado):", value="PAC-2026-0842")
+            patient_name_input = st.text_input(
+                "Identificação / Código da Paciente (Anonimizado):",
+                value=current_data.get("patient_id", ""),
+                placeholder="Ex: PAC-2026-0001 (opcional)",
+                disabled=is_locked,
+                key=f"input_patient_id_{st.session_state.form_version}",
+            )
 
-        submit_btn = st.form_submit_button("🚀 Executar Análise Completa Guardiã AI", use_container_width=True)
+        submit_btn = st.form_submit_button(
+            "🚀 Executar Análise Completa Guardiã AI",
+            use_container_width=True,
+            disabled=is_locked,
+        )
 
-    if submit_btn:
+    if submit_btn and not is_locked:
+        resolved_patient_id = patient_name_input.strip() if (patient_name_input and patient_name_input.strip()) else f"PAC-{datetime.now().strftime('%Y%m%d%H%M')}"
         patient_payload = {
             "Age": age,
             "Pregnancy_No": pregnancy_no,
@@ -172,12 +309,15 @@ with tab_main:
                 model_type=model_choice,
             )
             # Registrar auditoria
-            audit_record = log_encounter(pipeline_result, session_id=patient_name_input)
+            audit_record = log_encounter(pipeline_result, session_id=resolved_patient_id)
             pipeline_result["integrity_hash"] = audit_record["integrity_hash"]
             pipeline_result["encounter_id"] = audit_record["encounter_id"]
+            pipeline_result["patient_name_input"] = resolved_patient_id
             st.session_state.current_pipeline_result = pipeline_result
+            st.session_state.is_analyzed = True
+            st.rerun()
 
-    # Exibição dos Resultados da Análise
+    # Exibição dos Resultados da Análise (Apenas após Execução)
     if st.session_state.current_pipeline_result:
         res = st.session_state.current_pipeline_result
         st.markdown("---")
@@ -212,7 +352,8 @@ with tab_main:
                 unsafe_allow_html=True,
             )
         with pdf_col2:
-            pdf_bytes = generate_clinical_report_pdf(res, patient_name=patient_name_input)
+            patient_label_pdf = res.get("patient_name_input") or patient_name_input or "PAC-ANONIMO"
+            pdf_bytes = generate_clinical_report_pdf(res, patient_name=patient_label_pdf)
             st.download_button(
                 label="📥 Baixar Laudo Clínico (PDF)",
                 data=pdf_bytes,
@@ -220,6 +361,12 @@ with tab_main:
                 mime="application/pdf",
                 use_container_width=True,
             )
+
+        # Botão Inferior de Nova Análise
+        st.markdown("---")
+        if st.button("🔄 Iniciar Nova Análise / Novo Atendimento", type="primary", use_container_width=True, key=f"btn_new_bottom_{st.session_state.form_version}"):
+            reset_to_initial_state()
+            st.rerun()
 
 # ==========================================================
 # ABA 2: INTERPRETABILIDADE SHAP
@@ -251,7 +398,7 @@ with tab_shap:
             use_container_width=True,
         )
     else:
-        st.info("Execute uma análise na aba 'Novo Atendimento' para visualizar os detalhes SHAP.")
+        st.info("ℹ️ Nenhuma análise em andamento. Execute uma análise na aba 'Novo Atendimento & Triagem' para visualizar os detalhes SHAP.")
 
 # ==========================================================
 # ABA 3: EXPLORADOR DE PROTOCOLOS (RAG)
